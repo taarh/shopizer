@@ -48,6 +48,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.*;
 
+@SuppressWarnings("DuplicateCondition")
 @Controller
 public class UserController {
 	
@@ -127,13 +128,14 @@ public class UserController {
 			} else {
 				users = userService.listByStore(store);
 			}
-			 
 
-			for (User user : users) {
-				
-				if(!UserUtils.userInGroup(user, Constants.GROUP_SUPERADMIN)) {
-					
-					if(!currentUser.equals(user.getAdminName())){
+
+			for (Iterator<User> iterator = users.iterator(); iterator.hasNext(); ) {
+				User user = iterator.next();
+
+				if (!UserUtils.userInGroup(user, Constants.GROUP_SUPERADMIN)) {
+
+					if (!currentUser.equals(user.getAdminName())) {
 
 						@SuppressWarnings("rawtypes")
 						Map entry = new HashMap();
@@ -142,7 +144,7 @@ public class UserController {
 						entry.put("email", user.getAdminEmail());
 						entry.put("active", user.isActive());
 						resp.addDataEntry(entry);
-					
+
 					}
 				}
 			}
@@ -155,7 +157,7 @@ public class UserController {
 		}
 
 		String returnString = resp.toJSONString();
-		return new ResponseEntity<String>(returnString,HttpStatus.OK);
+		return new ResponseEntity<>(returnString, HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasRole('AUTH')")
@@ -290,22 +292,23 @@ public class UserController {
 	private void populateUserObjects(User user, MerchantStore store, Model model, Locale locale) throws Exception {
 		
 		//get groups
-		List<Group> groups = new ArrayList<Group>();
+		List<Group> groups = new ArrayList<>();
 		List<Group> userGroups = groupService.listGroup(GroupType.ADMIN);
-		for(Group group : userGroups) {
-			if(!group.getGroupName().equals(Constants.GROUP_SUPERADMIN)) {
+		for (Iterator<Group> iterator = userGroups.iterator(); iterator.hasNext(); ) {
+			Group group = iterator.next();
+			if (!group.getGroupName().equals(Constants.GROUP_SUPERADMIN)) {
 				groups.add(group);
 			}
 		}
 		
 		
-		List<MerchantStore> stores = new ArrayList<MerchantStore>();
+		List<MerchantStore> stores = new ArrayList<>();
 		//stores.add(store);
 		stores = merchantStoreService.list();
 		
 		
 		//questions
-		List<SecurityQuestion> questions = new ArrayList<SecurityQuestion>();
+		List<SecurityQuestion> questions = new ArrayList<>();
 		
 		SecurityQuestion question = new SecurityQuestion();
 		question.setId("1");
@@ -366,6 +369,7 @@ public class UserController {
 		
 
 		//display menu
+		User user1 = user;
 		setMenu(model,request);
 		
 		MerchantStore store = (MerchantStore)request.getAttribute(Constants.ADMIN_STORE);
@@ -373,16 +377,16 @@ public class UserController {
 
 
 		
-		if(user==null) {
-			user = new User();
+		if(user1 ==null) {
+			user1 = new User();
 		} else {
-			user.setAdminPassword("TRANSIENT");
+			user1.setAdminPassword("TRANSIENT");
 		}
 		
-		this.populateUserObjects(user, store, model, locale);
+		this.populateUserObjects(user1, store, model, locale);
 		
 
-		model.addAttribute("user", user);
+		model.addAttribute("user", user1);
 		
 		
 
@@ -405,7 +409,7 @@ public class UserController {
 			if(StringUtils.isBlank(code)) {
 				resp.setStatus(AjaxResponse.CODE_ALREADY_EXIST);
 				String returnString =  resp.toJSONString();
-				return new ResponseEntity<String>(returnString,httpHeaders,HttpStatus.OK);
+				return new ResponseEntity<>(returnString, httpHeaders, HttpStatus.OK);
 			}
 			
 			User user = userService.getByUserName(code);
@@ -418,12 +422,12 @@ public class UserController {
 					if(user.getAdminName().equals(code) && user.getId()==lid) {
 						resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
 						String returnString =  resp.toJSONString();
-						return new ResponseEntity<String>(returnString,httpHeaders,HttpStatus.OK);
+						return new ResponseEntity<>(returnString, httpHeaders, HttpStatus.OK);
 					}
 				} catch (Exception e) {
 					resp.setStatus(AjaxResponse.CODE_ALREADY_EXIST);
 					String returnString =  resp.toJSONString();
-					return new ResponseEntity<String>(returnString,httpHeaders,HttpStatus.OK);
+					return new ResponseEntity<>(returnString, httpHeaders, HttpStatus.OK);
 				}
 	
 			}
@@ -432,13 +436,13 @@ public class UserController {
 			if(StringUtils.isBlank(code)) {
 				resp.setStatus(AjaxResponse.CODE_ALREADY_EXIST);
 				String returnString =  resp.toJSONString();
-				return new ResponseEntity<String>(returnString,httpHeaders,HttpStatus.OK);
+				return new ResponseEntity<>(returnString, httpHeaders, HttpStatus.OK);
 			}
 
 			if(user!=null) {
 				resp.setStatus(AjaxResponse.CODE_ALREADY_EXIST);
 				String returnString =  resp.toJSONString();
-				return new ResponseEntity<String>(returnString,httpHeaders,HttpStatus.OK);
+				return new ResponseEntity<>(returnString, httpHeaders, HttpStatus.OK);
 			}
 			
 
@@ -451,7 +455,7 @@ public class UserController {
 		}
 		
 		String returnString = resp.toJSONString();
-		return new ResponseEntity<String>(returnString,httpHeaders,HttpStatus.OK);
+		return new ResponseEntity<>(returnString, httpHeaders, HttpStatus.OK);
 
 	}
 	
@@ -488,8 +492,9 @@ public class UserController {
 		}
 
 		List<Group> submitedGroups = user.getGroups();
-		Set<Integer> ids = new HashSet<Integer>();
-		for(Group group : submitedGroups) {
+		Set<Integer> ids = new HashSet<>();
+		for (Iterator<Group> iterator = submitedGroups.iterator(); iterator.hasNext(); ) {
+			Group group = iterator.next();
 			ids.add(group.getId());
 		}
 		
@@ -531,9 +536,10 @@ public class UserController {
 			
 			List<Group> groups = dbUser.getGroups();
 			//boolean removeSuperAdmin = true;
-			for(Group group : groups) {
+			for (Iterator<Group> iterator = groups.iterator(); iterator.hasNext(); ) {
+				Group group = iterator.next();
 				//can't revoke super admin
-				if(group.getGroupName().equals("SUPERADMIN")) {
+				if (group.getGroupName().equals("SUPERADMIN")) {
 					superAdmin = group;
 				}
 			}
@@ -570,7 +576,7 @@ public class UserController {
 		}
 		
 		
-		if(user.getId()==null || user.getId().longValue()==0) {
+		if(user.getId()==null || user.getId() ==0) {
 			
 			//save or update user
 			userService.saveOrUpdate(user);
@@ -654,14 +660,14 @@ public class UserController {
 				resp.setStatusMessage(messages.getMessage("message.unauthorized", locale));
 				resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);			
 				String returnString = resp.toJSONString();
-				return new ResponseEntity<String>(returnString,httpHeaders,HttpStatus.OK);
+				return new ResponseEntity<>(returnString, httpHeaders, HttpStatus.OK);
 			}
 			
 			if(!request.isUserInRole(Constants.GROUP_ADMIN)) {
 				resp.setStatusMessage(messages.getMessage("message.unauthorized", locale));
 				resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);			
 				String returnString = resp.toJSONString();
-				return new ResponseEntity<String>(returnString,httpHeaders,HttpStatus.OK);
+				return new ResponseEntity<>(returnString, httpHeaders, HttpStatus.OK);
 			}
 
 			
@@ -676,7 +682,7 @@ public class UserController {
 				resp.setStatusMessage(messages.getMessage("message.security.caanotremovesuperadmin", locale));
 				resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);			
 				String returnString = resp.toJSONString();
-				return new ResponseEntity<String>(returnString,httpHeaders,HttpStatus.OK);
+				return new ResponseEntity<>(returnString, httpHeaders, HttpStatus.OK);
 			}
 			
 			userService.delete(user);
@@ -692,7 +698,7 @@ public class UserController {
 		}
 		
 		String returnString = resp.toJSONString();
-		return new ResponseEntity<String>(returnString,httpHeaders,HttpStatus.OK);
+		return new ResponseEntity<>(returnString, httpHeaders, HttpStatus.OK);
 		
 	}
 	
@@ -700,7 +706,7 @@ public class UserController {
 	private void setMenu(Model model, HttpServletRequest request) throws Exception {
 		
 		//display menu
-		Map<String,String> activeMenus = new HashMap<String,String>();
+		Map<String,String> activeMenus = new HashMap<>();
 		activeMenus.put("profile", "profile");
 		activeMenus.put("user", "create-user");
 		
@@ -743,10 +749,10 @@ public class UserController {
 							resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
 							resp.setStatusMessage(messages.getMessage("message.username.notfound", locale));
 							String returnString = resp.toJSONString();
-							return new ResponseEntity<String>(returnString,httpHeaders,HttpStatus.OK);
+							return new ResponseEntity<>(returnString, httpHeaders, HttpStatus.OK);
 						}
 					
-						Map<String,String> entry = new HashMap<String,String>();
+						Map<String,String> entry = new HashMap<>();
 						entry.put(QUESTION_1, dbUser.getQuestion1());
 						entry.put(QUESTION_2, dbUser.getQuestion2());
 						entry.put(QUESTION_3, dbUser.getQuestion3());
@@ -764,14 +770,14 @@ public class UserController {
 						resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
 						resp.setStatusMessage(messages.getMessage("User.resetPassword.Error", locale));
 						String returnString = resp.toJSONString();
-						return new ResponseEntity<String>(returnString,httpHeaders,HttpStatus.OK);
+						return new ResponseEntity<>(returnString, httpHeaders, HttpStatus.OK);
 			}
 	
 		
 		
 		
 		String returnString = resp.toJSONString();
-		return new ResponseEntity<String>(returnString,httpHeaders,HttpStatus.OK);
+		return new ResponseEntity<>(returnString, httpHeaders, HttpStatus.OK);
 	}
 	//password reset functionality  ---  Sajid Shajahan
 	@RequestMapping(value="/admin/users/resetPasswordSecurityQtn.html", method=RequestMethod.POST)
@@ -852,7 +858,7 @@ public class UserController {
 		String returnString = resp.toJSONString();
 		final HttpHeaders httpHeaders= new HttpHeaders();
 	    httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-		return new ResponseEntity<String>(returnString,httpHeaders,HttpStatus.OK);
+		return new ResponseEntity<>(returnString, httpHeaders, HttpStatus.OK);
 	}
 	
 	}
