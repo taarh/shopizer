@@ -3,6 +3,7 @@ node{
         git 'https://github.com/taarh/shopizer'
     }
     stage("Compile"){
-        sh 'mvn compile'
+        def mvnHome=tool name: 'maven-3.6.3', type: 'maven'
+        sh"${mvnHome}/bin/mvn compile"
     }
 }
