@@ -3,11 +3,10 @@ node{
     stage("SCM Checkout"){
         git 'https://github.com/taarh/shopizer'
     }
-     stage("TEST"){
-        sh "${mvnHome}/bin/mvn test"
+    stage("Test"){
+        sh"${mvnHome}/bin/mvn test"
     }
     stage("Compile"){
-        sh "${mvnHome}/bin/mvn compile"
+        sh"${mvnHome}/bin/mvn compile"
     }
-   
 }
