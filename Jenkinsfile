@@ -7,6 +7,12 @@ node{
         sh"${mvnHome}/bin/mvn test"
     }
     stage("Compile"){
-        sh"${mvnHome}/bin/mvn compile"
+        sh"${mvnHome}/bin/mvn install  -Dmaven.test.skip=true"
+    }
+    stage("Build docker image "){
+        sh '''
+                cd sm-shop
+                docker build -f "Dockerfile" -t 0758631838/shopizer-app:latest .
+           '''
     }
 }
