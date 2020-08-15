@@ -15,4 +15,12 @@ node{
                 docker build -f "Dockerfile" -t 0758631838/shopizer-app:latest .
            '''
     }
+    
+    stage (" pull Image "){
+        withCredentials([string(credentialsId: 'docker-pwd', variable: 'dockerHubPwd')]) {
+            sh "docker -u 0758631838 -p ${dockerHubPwd}"
+        }
+            sh 'docker push 0758631838/shopizer-app:1.0'
+
+    }
 }
