@@ -7,7 +7,7 @@ node{
         sh"${mvnHome}/bin/mvn test"
     }
     stage("Compile"){
-        sh"${mvnHome}/bin/mvn install"
+        sh"${mvnHome}/bin/mvn install  -Dmaven.test.skip=true"
     }
     stage("Build docker image "){
         sh '''
