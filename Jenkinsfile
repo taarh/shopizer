@@ -7,7 +7,7 @@ node{
         sh"${mvnHome}/bin/mvn test"
     }
     stage("Compile"){
-        sh"${mvnHome}/bin/mvn compile"
+        sh"${mvnHome}/bin/mvn install"
     }
     stage("Build docker image "){
         sh '''
