@@ -20,7 +20,7 @@ node{
         withCredentials([string(credentialsId: 'docker-pwd', variable: 'dockerHubPwd')]) {
             sh "docker login -u 0758631838 -p ${dockerHubPwd}"
         }
-            sh 'docker push 0758631838/shopizer-app:1.0'
+            sh 'docker push 0758631838/shopizer-app:1.0.0'
 
     }
 }
