@@ -12,7 +12,7 @@ node{
     stage("Build docker image "){
         sh '''
                 cd sm-shop
-                docker build -f "Dockerfile" -t 0758631838/shopizer-app:latest .
+                docker build -f "Dockerfile" -t 0758631838/shopizer-app:1.0.0 .
            '''
     }
     
