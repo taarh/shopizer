@@ -18,7 +18,7 @@ node{
     
     stage (" pull Image "){
         withCredentials([string(credentialsId: 'docker-pwd', variable: 'dockerHubPwd')]) {
-            sh "docker -u 0758631838 -p ${dockerHubPwd}"
+            sh "docker login -u 0758631838 -p ${dockerHubPwd}"
         }
             sh 'docker push 0758631838/shopizer-app:1.0'
 
