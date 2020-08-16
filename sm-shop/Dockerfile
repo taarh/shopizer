@@ -28,4 +28,4 @@ ENV JAVA_OPTS="-Xmx1024m"
 
 CMD ["catalina.sh", "run"]
 
-EXPOSE 8080
+EXPOSE 8086
