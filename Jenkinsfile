@@ -26,7 +26,7 @@ node{
     
     stage("run on dev server"){
         
-        sh 'docker run -p 8080:8080 -d -name my_shopizer 0758631838/shopizer-app:1.0.0'
+        sh 'docker run -p 8080:8080 -d --name my_shopizer 0758631838/shopizer-app:1.0.0'
     
     }
 }
